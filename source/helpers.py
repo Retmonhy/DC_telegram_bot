@@ -1,41 +1,66 @@
-from constants import mines_values
+from constants import mines
+from math import *
 
 def calculate_emeralds_per_cycle(level, heroes):
   # кол-во шахт, которые будут заполнены
   filled_mines = heroes // 4
 
   # считаем количество больших шахт
-  if (level > 4000):
+  if (level >= 4000):
     big_mines_amount = (level - 3000) // 1000
-    last_big_mine = (level // 1000) * 1000
+    # last_big_mine = (level // 1000) * 1000
   else:
     big_mines_amount = 0
-    last_big_mine = 0
+    # last_big_mine = 0
 
   # количество малых
   small_mines_amount = filled_mines - big_mines_amount
 
   emeralds = 0
+  
   # сперва считаем изумруды с больших шахт
-  if (last_big_mine > 0):
+  if (big_mines_amount > 0):
     emeralds += big_mines_amount * 500
     
-  emeralds_from_small_mines = 0
   
-  counter = 0
+  counter = 1
+  next_mine_level = level
+  emeralds_from_small_mines = 0
+  print(f'''small_mines_amount = {small_mines_amount}''')
   while counter <= small_mines_amount:
-    next_mine_level = level - counter * 250
-    if (next_mine_level % 1000 == 0):
-      # если попали на большую шахту, то просто идем дальше
+    # тут посчитаем сколько изумрудов получим за малый круг тт(64 часа)
+    next_mine = mines[next_mine_level]
+    is_small_mine = next_mine['nominal'] < 500
+    if (is_small_mine):
+      emeralds_from_small_mines += next_mine['emeralds_per_hour'] * 64
       counter += 1
-    else:
-      emeralds_from_small_mines += mines_values[next_mine_level]
-      counter += 1
+    print(f'''след шахта на уровне {next_mine_level} {next_mine}.
+    is_small_mine {is_small_mine}
+    emeralds_from_small_mines {emeralds_from_small_mines}''')
 
-  # за большой круг успеваем проходить 3 маленьких круга 
+
+    # определяем следующую шахту   
+    if (next_mine_level > 1000):
+      next_mine_level = next_mine_level - 250
+    elif (next_mine_level <= 1000 and next_mine_level >= 700):
+      next_mine_level = next_mine_level - 100
+    elif (next_mine_level == 600):
+      next_mine_level = 450
+    elif (next_mine_level <= 450 and next_mine_level >= 350):
+      next_mine_level = next_mine_level - 100
+    elif (next_mine_level == 250):
+      next_mine_level = 175
+    elif (next_mine_level == 175):
+      next_mine_level = 125
+    elif (next_mine_level == 125):
+      next_mine_level = 35
+    elif (next_mine_level == 35):
+      next_mine_level = 0
+
+  # за большой круг(192 часа) успеваем проходить 3 маленьких круга 
   emeralds += 3 * emeralds_from_small_mines
   
-  return emeralds
+  return ceil(emeralds)
 
 
 
