@@ -5,5 +5,6 @@ class CalculatorSteps(enum.Enum):
   last_mine_level = 1
   heroes_amount = 2
   emeralds = 3
-  result = 4
+  result = 4,
+  end = 5
   
