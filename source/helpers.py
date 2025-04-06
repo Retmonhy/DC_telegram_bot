@@ -8,10 +8,8 @@ def calculate_emeralds_per_cycle(level, heroes):
   # считаем количество больших шахт
   if (level >= 4000):
     big_mines_amount = (level - 3000) // 1000
-    # last_big_mine = (level // 1000) * 1000
   else:
     big_mines_amount = 0
-    # last_big_mine = 0
 
   # количество малых
   small_mines_amount = filled_mines - big_mines_amount
@@ -26,7 +24,6 @@ def calculate_emeralds_per_cycle(level, heroes):
   counter = 1
   next_mine_level = level
   emeralds_from_small_mines = 0
-  print(f'''small_mines_amount = {small_mines_amount}''')
   while counter <= small_mines_amount:
     # тут посчитаем сколько изумрудов получим за малый круг тт(64 часа)
     next_mine = mines[next_mine_level]
@@ -34,9 +31,6 @@ def calculate_emeralds_per_cycle(level, heroes):
     if (is_small_mine):
       emeralds_from_small_mines += next_mine['emeralds_per_hour'] * 64
       counter += 1
-    print(f'''след шахта на уровне {next_mine_level} {next_mine}.
-    is_small_mine {is_small_mine}
-    emeralds_from_small_mines {emeralds_from_small_mines}''')
 
 
     # определяем следующую шахту   
