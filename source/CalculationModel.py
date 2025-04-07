@@ -1,7 +1,9 @@
+from enums import CalculationMode
 class CalculationModel:
   level = 0
   heroes = 0
   emeralds = 0
+  mode = CalculationMode.Three
 
   @staticmethod
   def set_level(level: int):
@@ -14,6 +16,10 @@ class CalculationModel:
   @staticmethod
   def set_emeralds(emeralds: int):
     CalculationModel.emeralds = emeralds
+
+  @staticmethod
+  def set_mode(mode: CalculationMode):
+    CalculationModel.mode = mode
 
   @staticmethod
   def reset_model():

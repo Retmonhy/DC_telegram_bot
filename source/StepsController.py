@@ -1,4 +1,4 @@
-from steps import CalculatorSteps;
+from enums import CalculatorSteps;
 
 class StepsController:
   current_step = CalculatorSteps.start

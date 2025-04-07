@@ -1,7 +1,7 @@
 from bot import bot 
 from telebot import types
 from StepsController import StepsController
-from steps import CalculatorSteps;
+from enums import CalculatorSteps;
 
 # для меню
 # /start - начать расчет заново
@@ -21,6 +21,7 @@ def start_message(message):
 @bot.message_handler(commands=['terms'])
 def write_terms(message):
   message_text = f'''Термины и понятия
+*Темный ритуал(ТР)* - перерождение со сбросом всех героев
 *Тайм тревел(ТТ)* - механизм получения изумрудов путём заполнения шахт героями и перемотки времени.
 *Шахта* - место, куда отправляются герои для майнинга изумрудов. Для заполнени яодной шахты требуется 4 героя.
 *Изумруды* - игровой ресурс, необходимый для открытия новых героев.
