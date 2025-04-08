@@ -52,12 +52,6 @@ def buttons(message):
         StepsController.go_to_step(CalculatorSteps.mode)
       else:
         bot.send_message(message.chat.id, "Введите число изумрудов, которое вы хотите накопить")
-    # TODO перенести в об callback_handlers
-    case CalculatorSteps.result:
-      if (message.text != "🚀 Рассчитать"):
-        bot.send_message(message.chat.id, 'Воспользуйтесь кнопками')
-    case CalculatorSteps.end:
-      value=1
     case _:
       bot.send_message(message.chat.id, 'Воспользуйтесь кнопками')
 

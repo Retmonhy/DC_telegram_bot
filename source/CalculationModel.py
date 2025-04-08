@@ -26,3 +26,4 @@ class CalculationModel:
     CalculationModel.level = 0
     CalculationModel.heroes = 0
     CalculationModel.emeralds = 0
+    CalculationModel.mode = CalculationMode.Three

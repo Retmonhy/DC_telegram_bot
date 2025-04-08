@@ -51,7 +51,6 @@ def calculate_emeralds_per_cycle(level, heroes, mode):
     elif (next_mine_level == 35):
       next_mine_level = 0
 
-  print(f'''mode = {mode}''')
   # за большой круг(192 часа) успеваем проходить 3 маленьких круга 
   emeralds += mode * emeralds_from_small_mines
   
