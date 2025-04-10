@@ -1,7 +1,5 @@
 from bot import bot 
 from telebot import types
-from StepsController import StepsController
-from enums import CalculatorSteps;
 
 # для меню
 # /start - начать расчет заново
@@ -15,7 +13,6 @@ def start_message(message):
   start_button = types.InlineKeyboardButton("🚀 Начать расчет", callback_data = 'start_calculating')
   markup.add(start_button)
   
-  StepsController.go_to_step(CalculatorSteps.start)
   message_text = f'''Привет, {message.from_user.first_name} 👋\nНу что, начнем расчет?'''
   bot.send_message(message.chat.id, message_text, reply_markup=markup)
 

@@ -1,7 +1,8 @@
 from constants import mines
 from math import *
+from enums import DarkRitualsAmount
 
-def calculate_emeralds_per_cycle(level, heroes, mode):
+def calculate_emeralds_per_cycle(level: int, heroes: int, dr_amount: DarkRitualsAmount) -> int:
   # кол-во шахт, которые будут заполнены
   filled_mines = heroes // 4
 
@@ -51,8 +52,8 @@ def calculate_emeralds_per_cycle(level, heroes, mode):
     elif (next_mine_level == 35):
       next_mine_level = 0
 
-  # за большой круг(192 часа) успеваем проходить 3 маленьких круга 
-  emeralds += mode * emeralds_from_small_mines
+  # за большой круг(192 часа) успеваем проходить dr_amount маленьких кругов 
+  emeralds += dr_amount * emeralds_from_small_mines
   
   return ceil(emeralds)
 

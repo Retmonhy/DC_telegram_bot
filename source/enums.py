@@ -1,6 +1,10 @@
 import enum
 
-class CalculationMode(enum.IntEnum):
+class Strategy(enum.Enum):
+  bottles = 'bottles'
+  emeralds = 'emeralds'
+
+class DarkRitualsAmount(enum.IntEnum):
   Three = 3,
   Two = 2,
   One = 1
@@ -10,8 +14,8 @@ class CalculatorSteps(enum.Enum):
   last_mine_level = 'last_mine_level'
   heroes_amount ='heroes_amount'
   emeralds = 'emeralds'
-  mode = 'mode'
+  bottles = 'bottles'
+  dr_amount = 'dr_amount'
   result = 'result',
-  end = 'end'
 
   
