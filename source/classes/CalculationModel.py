@@ -1,4 +1,5 @@
 from enums import DarkRitualsAmount, CalculatorSteps, Strategy
+from constants import mines 
 class CalculationModel:
 
   def __init__(self):
@@ -15,7 +16,11 @@ class CalculationModel:
       # 20000 - самая последняя шахта
       self.level = 20000
     else:
-      self.level = (level // 250) * 250
+      self.level = 0
+      for key, value in mines.items():
+        if (key <= level):
+          self.level = key
+          break
       
   def set_heroes(self, heroes: int):
     self.heroes = (heroes // 4) * 4

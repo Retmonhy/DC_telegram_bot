@@ -16,7 +16,7 @@ def callback_handler(callback: types.CallbackQuery):
       ModelStore.add_model(callback.message.chat.id, model)
       model.go_to_step(CalculatorSteps.last_mine_level)
       message_text = "Введите уровень в числовом формате, на котором вы заполняете последнюю шахту. \n\nПример: 7500 или 12250"
-      bot.send_message(callback.message.chat.id, message_text)
+      bot.send_message(callback.message.chat.id, message_text, reply_markup= types.ReplyKeyboardRemove())
   
   model: CalculationModel = ModelStore.get_model_by_id(callback.message.chat.id)
   
@@ -45,7 +45,7 @@ def callback_handler(callback: types.CallbackQuery):
 
   # показать результаты
   if (callback.data == 'get_result'):
-    if (model.level and model.heroes and (model.emeralds or model.bottles)):
+    if (model.level >= 0 and model.heroes and (model.emeralds or model.bottles)):
           calc_result = get_result(model)
           
           average_craft_emeralds_per_bottle = 4.25
@@ -121,17 +121,18 @@ def get_message_with_parameters(model: CalculationModel):
 
   return f'```Расчет будет осуществлен по следующим параметрам: \n{table}```'
 
-# делаем рассчет по стратегии с изумрудами 
+# делаем рассчет и возвращаем результат 
 def get_result(model: CalculationModel) -> dict[str, int]:
    emeralds_per_cycle = calculate_emeralds_per_cycle(model.level, model.heroes, model.dark_ritual_amount)
    cycles_amount: int = 0
    total_bottles: int = 0
    total_emeralds: int = 0
    if (model.strategy == Strategy.bottles):
-      cycles_amount = ceil((model.bottles / 480)) + 1
+      cycles_amount = ceil(model.bottles / 480)
       total_emeralds = ceil(emeralds_per_cycle * cycles_amount)
    else:
-      cycles_amount = ceil((model.emeralds // emeralds_per_cycle) + 1)
+      if (emeralds_per_cycle > 0):
+         cycles_amount = ceil(model.emeralds / emeralds_per_cycle)
       total_bottles = ceil(cycles_amount * 480)
 
    return {'emeralds_per_cycle': emeralds_per_cycle, 'cycles_amount': cycles_amount, 'total_bottles': total_bottles, 'total_emeralds': total_emeralds}

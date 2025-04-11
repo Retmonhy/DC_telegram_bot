@@ -14,29 +14,35 @@ def buttons(message):
     case CalculatorSteps.last_mine_level:
       # вводит уровень
       if (message.text.isdigit()):
-        # если входные данные нас удовлетворили, то мы сеттим уровень и идем дальше
-        model.set_level(int(message.text))
-        message_text = f'''Последняя шахта запоняется на уровне *{model.level}*.
+        if (int(message.text) < 35):
+          bot.send_message(message.chat.id, f'''В диапазон от 0 до {int(message.text)} не попадает ни одна шахта. Введите корректный уровень''')  
+        else:
+          # если входные данные нас удовлетворили, то мы сеттим уровень и идем дальше
+          model.set_level(int(message.text))
+          message_text = f'''Последняя шахта запоняется на уровне *{model.level}*.
 Теперь введите количество героев в числовом формате, которыми вы заполняете шахты.
 Пример: 104 или 76'''
-        bot.send_message(message.chat.id, message_text, 'markdown')
-        # устанавливаем новый шаг
-        model.go_to_step(CalculatorSteps.heroes_amount)
+          bot.send_message(message.chat.id, message_text, 'markdown')
+          # устанавливаем новый шаг
+          model.go_to_step(CalculatorSteps.heroes_amount)
       else:
         bot.send_message(message.chat.id, "Введите на каком уровне вы заполняете последнюю шахту")
 
     case CalculatorSteps.heroes_amount:
       # вводит количество героев
-      if (message.text.isdigit()):
-        model.set_heroes(int(message.text))
-        message_text = f'''❗️Выберите стратегию расчета:
+      if (message.text.isdigit()):        
+        if (int(message.text) < 4):
+          bot.send_message(message.chat.id, f'''Количество героев {int(message.text)} не способно заполнить ни одну шахту. Введите корректное значение''')  
+        else:
+          model.set_heroes(int(message.text))
+          message_text = f'''❗️Выберите стратегию расчета:
 • Указать количество бутылок и посчитать сколько изумрудов получится
 • Указать количество изумрудов и узнать сколько бутылок потребуется, чтобы их набрать'''
-        markup = types.InlineKeyboardMarkup()
-        bottles_button = types.InlineKeyboardButton('Указать булытки', callback_data='specify_bottles')
-        emeralds_button = types.InlineKeyboardButton('Указать изумруды', callback_data='specify_emeralds')
-        markup.add(bottles_button, emeralds_button)
-        bot.send_message(message.chat.id, message_text, reply_markup=markup)
+          markup = types.InlineKeyboardMarkup()
+          bottles_button = types.InlineKeyboardButton('Указать булытки', callback_data='specify_bottles')
+          emeralds_button = types.InlineKeyboardButton('Указать изумруды', callback_data='specify_emeralds')
+          markup.add(bottles_button, emeralds_button)
+          bot.send_message(message.chat.id, message_text, reply_markup=markup)
       else:
         bot.send_message(message.chat.id, "Введите количество героев, которыми вы заполняете шахты")
 
