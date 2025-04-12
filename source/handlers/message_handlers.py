@@ -21,7 +21,8 @@ def buttons(message):
           model.set_level(int(message.text))
           message_text = f'''Последняя шахта запоняется на уровне *{model.level}*.
 Теперь введите количество героев в числовом формате, которыми вы заполняете шахты.
-Пример: 104 или 76'''
+
+*Пример*: 104 или 76'''
           bot.send_message(message.chat.id, message_text, 'markdown')
           # устанавливаем новый шаг
           model.go_to_step(CalculatorSteps.heroes_amount)
@@ -35,14 +36,14 @@ def buttons(message):
           bot.send_message(message.chat.id, f'''Количество героев {int(message.text)} не способно заполнить ни одну шахту. Введите корректное значение''')  
         else:
           model.set_heroes(int(message.text))
-          message_text = f'''❗️Выберите стратегию расчета:
-• Указать количество бутылок и посчитать сколько изумрудов получится
-• Указать количество изумрудов и узнать сколько бутылок потребуется, чтобы их набрать'''
+          message_text = f'''❗️<u>Выберите стратегию расчета:</u>
+- <b>Указать количество бутылок</b> и посчитать сколько изумрудов получится
+- <b>Указать количество изумрудов</b> и узнать сколько бутылок потребуется, чтобы их набрать'''
           markup = types.InlineKeyboardMarkup()
-          bottles_button = types.InlineKeyboardButton('Указать булытки', callback_data='specify_bottles')
-          emeralds_button = types.InlineKeyboardButton('Указать изумруды', callback_data='specify_emeralds')
+          bottles_button = types.InlineKeyboardButton('🍾Указать булытки', callback_data='specify_bottles')
+          emeralds_button = types.InlineKeyboardButton('💎Указать изумруды', callback_data='specify_emeralds')
           markup.add(bottles_button, emeralds_button)
-          bot.send_message(message.chat.id, message_text, reply_markup=markup)
+          bot.send_message(message.chat.id, message_text, reply_markup=markup, parse_mode='html')
       else:
         bot.send_message(message.chat.id, "Введите количество героев, которыми вы заполняете шахты")
 
