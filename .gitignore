@@ -1,3 +1,4 @@
 /env/*
 __pycache__/
 /source/secret_data.py
+calc_count.txt

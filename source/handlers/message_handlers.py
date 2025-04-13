@@ -4,11 +4,11 @@ from math import *
 from enums import CalculatorSteps
 from handlers.command_handlers import *
 from handlers.callback_handlers import *
-from classes.ModelStore import ModelStore
+import model_singleton
 
 @bot.message_handler(content_types=['text'])
 def buttons(message):
-  model: CalculationModel = ModelStore.get_model_by_id(message.chat.id)
+  model: CalculationModel = model_singleton.get_model_by_id(message.chat.id)
   match model.current_step:
 
     case CalculatorSteps.last_mine_level:
@@ -37,8 +37,8 @@ def buttons(message):
         else:
           model.set_heroes(int(message.text))
           message_text = f'''❗️<u>Выберите стратегию расчета:</u>
-- <b>Указать количество бутылок</b> и посчитать сколько изумрудов получится
-- <b>Указать количество изумрудов</b> и узнать сколько бутылок потребуется, чтобы их набрать'''
+— <b>Указать количество бутылок</b> и посчитать сколько изумрудов получится
+— <b>Указать количество изумрудов</b> и узнать сколько бутылок потребуется, чтобы их набрать'''
           markup = types.InlineKeyboardMarkup()
           bottles_button = types.InlineKeyboardButton('🍾Указать булытки', callback_data='specify_bottles')
           emeralds_button = types.InlineKeyboardButton('💎Указать изумруды', callback_data='specify_emeralds')

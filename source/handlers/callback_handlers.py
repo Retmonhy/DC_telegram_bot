@@ -5,7 +5,7 @@ from classes.CalculationModel import CalculationModel
 from enums import CalculatorSteps, DarkRitualsAmount, Strategy
 from telebot import types
 import prettytable as pt
-from classes.ModelStore import ModelStore
+from model_singleton import model_singleton
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_handler(callback: types.CallbackQuery):
@@ -13,12 +13,12 @@ def callback_handler(callback: types.CallbackQuery):
   if (callback.data == 'start_calculating'):
       # создаем расчетную модель для этого чата
       model = CalculationModel()
-      ModelStore.add_model(callback.message.chat.id, model)
+      model_singleton.add_model(callback.message.chat.id, model)
       model.go_to_step(CalculatorSteps.last_mine_level)
       message_text = "Введите уровень в числовом формате, на котором вы заполняете последнюю шахту. \n\n*Пример:* 7500 или 12250"
       bot.send_message(callback.message.chat.id, message_text, reply_markup= types.ReplyKeyboardRemove(), parse_mode='markdown')
   
-  model: CalculationModel = ModelStore.get_model_by_id(callback.message.chat.id)
+  model: CalculationModel = model_singleton.get_model_by_id(callback.message.chat.id)
   
   # заполняет в модели мод расчета
   if (callback.data == 'mode_1'):
@@ -81,7 +81,7 @@ def callback_handler(callback: types.CallbackQuery):
 За то же самое количество банок с помощью крафтов можно получить <b>{emeralds_from_craft} изумрудов</b>.
 '''
           bot.send_message(callback.message.chat.id, message_text, parse_mode='html')
-          
+          model_singleton.increase_calc_counter()
           end_message_text = 'Хотите сделать еще один расчет?'
           end_markup = types.InlineKeyboardMarkup()
           calc_again_button = types.InlineKeyboardButton(text='🚀 Новый расчет', callback_data="start_calculating")
@@ -98,7 +98,7 @@ def callback_handler(callback: types.CallbackQuery):
 
 # отправляем резюме параметров
 def send_parameters_message(message: types.Message):
-  model = ModelStore.get_model_by_id(message.chat.id)
+  model = model_singleton.get_model_by_id(message.chat.id)
   message_text = get_message_with_parameters(model)
   markup = types.InlineKeyboardMarkup()
   calculate_button = types.InlineKeyboardButton("🧮 Показать результат", callback_data='get_result')
