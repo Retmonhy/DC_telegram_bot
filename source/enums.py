@@ -11,11 +11,12 @@ class DarkRitualsAmount(enum.IntEnum):
 
 class CalculatorSteps(enum.Enum):
   start = 'start'
-  last_mine_level = 'last_mine_level'
-  heroes_amount ='heroes_amount'
-  emeralds = 'emeralds'
-  bottles = 'bottles'
-  dr_amount = 'dr_amount'
+  level_input = 'level_input'
+  heroes_input ='heroes_input'
+  mode_selection = 'mode_selection'
+  emeralds_input = 'emeralds_input'
+  bottles_input = 'bottles_input'
+  dr_amount_selection = 'dr_amount_selection'
   result = 'result',
 
   

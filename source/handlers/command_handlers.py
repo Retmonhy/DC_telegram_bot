@@ -1,6 +1,8 @@
 from bot import bot 
 from telebot import types
 from model_singleton import model_singleton
+from telebot import types
+from enums import CalculatorSteps
 
 # для меню
 # /start - начать расчет заново
@@ -9,11 +11,12 @@ from model_singleton import model_singleton
 # /developer - разработчик
 
 @bot.message_handler(commands=['start'])
-def start_message(message):
+def start_message(message: types.Message):
   markup = types.InlineKeyboardMarkup()
   start_button = types.InlineKeyboardButton("🚀 Начать расчет", callback_data = 'start_calculating')
   markup.add(start_button)
-  
+  model = model_singleton.get_model_by_id(message.chat.id)
+  model.go_to_step(CalculatorSteps.start)
   message_text = f'''Привет, {message.from_user.first_name} 👋\nНу что, начнем расчет?'''
   bot.send_message(message.chat.id, message_text, reply_markup=markup)
 

@@ -14,7 +14,7 @@ def callback_handler(callback: types.CallbackQuery):
       # создаем расчетную модель для этого чата
       model = CalculationModel()
       model_singleton.add_model(callback.message.chat.id, model)
-      model.go_to_step(CalculatorSteps.last_mine_level)
+      model.go_to_step(CalculatorSteps.level_input)
       message_text = "Введите уровень в числовом формате, на котором вы заполняете последнюю шахту. \n\n*Пример:* 7500 или 12250"
       bot.send_message(callback.message.chat.id, message_text, reply_markup= types.ReplyKeyboardRemove(), parse_mode='markdown')
   
@@ -39,17 +39,17 @@ def callback_handler(callback: types.CallbackQuery):
   
   #  выбираем по какому параметру будет рассчет: бутылки или изумруды
   if (callback.data == 'specify_bottles'):
-      if (model.current_step != CalculatorSteps.bottles and model.current_step != CalculatorSteps.emeralds):
+      if (model.current_step != CalculatorSteps.bottles_input and model.current_step != CalculatorSteps.emeralds_input):
          model.set_strategy(Strategy.bottles)
          message_text = "Введите количество бутылок, которые вы готовы потратить на ТТ"
          bot.send_message(callback.message.chat.id, message_text)
-         model.go_to_step(CalculatorSteps.bottles)
+         model.go_to_step(CalculatorSteps.bottles_input)
   if (callback.data == 'specify_emeralds'):
-      if (model.current_step != CalculatorSteps.bottles and model.current_step != CalculatorSteps.emeralds):
+      if (model.current_step != CalculatorSteps.bottles_input and model.current_step != CalculatorSteps.emeralds_input):
          model.set_strategy(Strategy.emeralds)
          message_text = "Введите количество изумрудов, которое хотите накопить"
          bot.send_message(callback.message.chat.id, message_text)
-         model.go_to_step(CalculatorSteps.emeralds)
+         model.go_to_step(CalculatorSteps.emeralds_input)
 
   # показать результаты
   if (callback.data == 'get_result'):
@@ -93,7 +93,7 @@ def callback_handler(callback: types.CallbackQuery):
   # нажатие кнопки Новый расчет
   if (callback.data == 'calc_again'):
      model.reset_model()
-     model.go_to_step(CalculatorSteps.start)
+     model.go_to_step(CalculatorSteps.level_input)
 
 
 # отправляем резюме параметров
