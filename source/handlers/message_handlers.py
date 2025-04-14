@@ -5,12 +5,13 @@ from enums import CalculatorSteps
 from handlers.command_handlers import *
 from handlers.callback_handlers import *
 from model_singleton import model_singleton
+from constants import ADMIN_CHAT_ID
 
 @bot.message_handler(content_types=['text'])
-def buttons(message):
+def message_handlers(message):
+ try:
   model: CalculationModel = model_singleton.get_model_by_id(message.chat.id)
   match model.current_step:
-
     case CalculatorSteps.level_input:
       # вводит уровень
       if (message.text.isdigit()):
@@ -78,6 +79,10 @@ def buttons(message):
 
     case _:
       bot.send_message(message.chat.id, 'Воспользуйтесь кнопками')
+ except Exception as e:
+   bot.send_message(ADMIN_CHAT_ID, e)
+   print(f"Не удалось отправить сообщение пользователю: {e}")
+
 
 # спросим сколько темрых ритуалов за большой круг делает пользователь
 def how_much_dark_rit(message: types.Message):

@@ -107,3 +107,5 @@ mines = {
   35: {'nominal': 1, 'time': 4, 'emeralds_per_hour': 1/4},
   0: {'nominal': 0, 'time': 4, 'emeralds_per_hour': 0},
 }
+
+ADMIN_CHAT_ID = 1730221484

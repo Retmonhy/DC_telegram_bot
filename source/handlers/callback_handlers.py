@@ -6,73 +6,75 @@ from enums import CalculatorSteps, DarkRitualsAmount, Strategy
 from telebot import types
 import prettytable as pt
 from model_singleton import model_singleton
+from  constants import ADMIN_CHAT_ID
 
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_handler(callback: types.CallbackQuery):
-  # сюда попадаем, когда человек нажимает на кнопку Начать расчет
-  if (callback.data == 'start_calculating'):
-      # создаем расчетную модель для этого чата
-      model = CalculationModel()
-      model_singleton.add_model(callback.message.chat.id, model)
-      model.go_to_step(CalculatorSteps.level_input)
-      message_text = "Введите уровень в числовом формате, на котором вы заполняете последнюю шахту. \n\n*Пример:* 7500 или 12250"
-      bot.send_message(callback.message.chat.id, message_text, reply_markup= types.ReplyKeyboardRemove(), parse_mode='markdown')
+   try:
+      # сюда попадаем, когда человек нажимает на кнопку Начать расчет
+      if (callback.data == 'start_calculating'):
+            # создаем расчетную модель для этого чата
+            model = CalculationModel()
+            model_singleton.add_model(callback.message.chat.id, model)
+            model.go_to_step(CalculatorSteps.level_input)
+            message_text = "Введите уровень в числовом формате, на котором вы заполняете последнюю шахту. \n\n*Пример:* 7500 или 12250"
+            bot.send_message(callback.message.chat.id, message_text, reply_markup= types.ReplyKeyboardRemove(), parse_mode='markdown')
+      
+      model: CalculationModel = model_singleton.get_model_by_id(callback.message.chat.id)
   
-  model: CalculationModel = model_singleton.get_model_by_id(callback.message.chat.id)
+      # заполняет в модели мод расчета
+      if (callback.data == 'mode_1'):
+         model.set_dr_amount(DarkRitualsAmount.One)
+         send_parameters_message(callback.message)
+         # устанавливаем новый шаг
+         model.go_to_step(CalculatorSteps.result)
+      if (callback.data == 'mode_2'):
+         model.set_dr_amount(DarkRitualsAmount.Two)
+         send_parameters_message(callback.message)
+         # устанавливаем новый шаг
+         model.go_to_step(CalculatorSteps.result)
+      if (callback.data == 'mode_3'):
+         model.set_dr_amount(DarkRitualsAmount.Three)
+         send_parameters_message(callback.message)
+         # устанавливаем новый шаг
+         model.go_to_step(CalculatorSteps.result)
   
-  # заполняет в модели мод расчета
-  if (callback.data == 'mode_1'):
-     model.set_dr_amount(DarkRitualsAmount.One)
-     send_parameters_message(callback.message)
-     # устанавливаем новый шаг
-     model.go_to_step(CalculatorSteps.result)
-  if (callback.data == 'mode_2'):
-     model.set_dr_amount(DarkRitualsAmount.Two)
-     send_parameters_message(callback.message)
-     # устанавливаем новый шаг
-     model.go_to_step(CalculatorSteps.result)
-  if (callback.data == 'mode_3'):
-     model.set_dr_amount(DarkRitualsAmount.Three)
-     send_parameters_message(callback.message)
-     # устанавливаем новый шаг
-     model.go_to_step(CalculatorSteps.result)
-  
-  #  выбираем по какому параметру будет рассчет: бутылки или изумруды
-  if (callback.data == 'specify_bottles'):
-      if (model.current_step != CalculatorSteps.bottles_input and model.current_step != CalculatorSteps.emeralds_input):
-         model.set_strategy(Strategy.bottles)
-         message_text = "Введите количество бутылок, которые вы готовы потратить на ТТ"
-         bot.send_message(callback.message.chat.id, message_text)
-         model.go_to_step(CalculatorSteps.bottles_input)
-  if (callback.data == 'specify_emeralds'):
-      if (model.current_step != CalculatorSteps.bottles_input and model.current_step != CalculatorSteps.emeralds_input):
-         model.set_strategy(Strategy.emeralds)
-         message_text = "Введите количество изумрудов, которое хотите накопить"
-         bot.send_message(callback.message.chat.id, message_text)
-         model.go_to_step(CalculatorSteps.emeralds_input)
+      #  выбираем по какому параметру будет рассчет: бутылки или изумруды
+      if (callback.data == 'specify_bottles'):
+            if (model.current_step != CalculatorSteps.bottles_input and model.current_step != CalculatorSteps.emeralds_input):
+               model.set_strategy(Strategy.bottles)
+               message_text = "Введите количество бутылок, которые вы готовы потратить на ТТ"
+               bot.send_message(callback.message.chat.id, message_text)
+               model.go_to_step(CalculatorSteps.bottles_input)
+      if (callback.data == 'specify_emeralds'):
+            if (model.current_step != CalculatorSteps.bottles_input and model.current_step != CalculatorSteps.emeralds_input):
+               model.set_strategy(Strategy.emeralds)
+               message_text = "Введите количество изумрудов, которое хотите накопить"
+               bot.send_message(callback.message.chat.id, message_text)
+               model.go_to_step(CalculatorSteps.emeralds_input)
 
-  # показать результаты
-  if (callback.data == 'get_result'):
-    if (model.level >= 0 and model.heroes and (model.emeralds or model.bottles)):
-          calc_result = get_result(model)
-          
-          average_craft_emeralds_per_bottle = 4.25
-          time = get_readable_time((calc_result.get('cycles_amount') * 10 * model.dark_ritual_amount))
-          emeralds_from_craft: int = 0 
-          
-          message_text: str = ''
-          if (model.strategy == Strategy.bottles):
-             emeralds_from_craft = ceil(model.bottles * average_craft_emeralds_per_bottle)
-             message_text = f'''За <b>{model.bottles} бутылок</b> вы наберете <b>{calc_result.get('total_emeralds')} изумрудов</b>. 
+      # показать результаты
+      if (callback.data == 'get_result'):
+         if (model.level >= 0 and model.heroes and (model.emeralds or model.bottles)):
+               calc_result = get_result(model)
+               
+               average_craft_emeralds_per_bottle = 4.25
+               time = get_readable_time((calc_result.get('cycles_amount') * 10 * model.dark_ritual_amount))
+               emeralds_from_craft: int = 0 
+               
+               message_text: str = ''
+               if (model.strategy == Strategy.bottles):
+                  emeralds_from_craft = ceil(model.bottles * average_craft_emeralds_per_bottle)
+                  message_text = f'''За <b>{model.bottles} бутылок</b> вы наберете <b>{calc_result.get('total_emeralds')} изумрудов</b>. 
 Необходимо пройти <b>{calc_result.get('cycles_amount')}</b> больших циклов и затратить минимум <b>{time} часов</b>.
 За большой цикл вы получаете <b>{calc_result.get('emeralds_per_cycle')} изумрудов</b>
 
 <u>Дополнительная информация:</u>
 За то же самое количество банок с помощью крафтов можно получить <b>{emeralds_from_craft}</b> изумрудов.
 '''
-          if (model.strategy == Strategy.emeralds):
-             emeralds_from_craft = ceil(calc_result.get('total_bottles') * average_craft_emeralds_per_bottle)
-             message_text = f'''Вы наберете <b>{model.emeralds} изумрудов</b> за <b>{calc_result.get('cycles_amount')}</b> больших циклов. 
+               if (model.strategy == Strategy.emeralds):
+                  emeralds_from_craft = ceil(calc_result.get('total_bottles') * average_craft_emeralds_per_bottle)
+                  message_text = f'''Вы наберете <b>{model.emeralds} изумрудов</b> за <b>{calc_result.get('cycles_amount')}</b> больших циклов. 
 Необходимо затратить <b>{calc_result.get('total_bottles')} бутылок</b>
 За большой цикл вы получаете <b>{calc_result.get('emeralds_per_cycle')} изумрудов</b>
 Затратите минимум <b>{time} часов</b>
@@ -80,21 +82,24 @@ def callback_handler(callback: types.CallbackQuery):
 <u>Дополнительная информация:</u>
 За то же самое количество банок с помощью крафтов можно получить <b>{emeralds_from_craft} изумрудов</b>.
 '''
-          bot.send_message(callback.message.chat.id, message_text, parse_mode='html')
-          model_singleton.increase_calc_counter()
-          end_message_text = 'Хотите сделать еще один расчет?'
-          end_markup = types.InlineKeyboardMarkup()
-          calc_again_button = types.InlineKeyboardButton(text='🚀 Новый расчет', callback_data="start_calculating")
-          end_markup.add(calc_again_button)
-          bot.send_message(callback.message.chat.id, end_message_text, reply_markup=end_markup)
-    else:
-      bot.send_message(callback.message.chat.id, 'Невозможно совершить расчет')
+               bot.send_message(callback.message.chat.id, message_text, parse_mode='html')
+               model_singleton.increase_calc_counter()
+               end_message_text = 'Хотите сделать еще один расчет?'
+               end_markup = types.InlineKeyboardMarkup()
+               calc_again_button = types.InlineKeyboardButton(text='🚀 Новый расчет', callback_data="start_calculating")
+               end_markup.add(calc_again_button)
+               bot.send_message(callback.message.chat.id, end_message_text, reply_markup=end_markup)
+         else:
+            bot.send_message(callback.message.chat.id, 'Невозможно совершить расчет')
   
-  # нажатие кнопки Новый расчет
-  if (callback.data == 'calc_again'):
-     model.reset_model()
-     model.go_to_step(CalculatorSteps.level_input)
+      # нажатие кнопки Новый расчет
+      if (callback.data == 'calc_again'):
+         model.reset_model()
+         model.go_to_step(CalculatorSteps.level_input)
 
+   except Exception as e:
+      bot.send_message(ADMIN_CHAT_ID, e)
+      print(f"Не удалось отправить сообщение пользователю: {e}")
 
 # отправляем резюме параметров
 def send_parameters_message(message: types.Message):
